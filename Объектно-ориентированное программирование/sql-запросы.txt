@@ -1,0 +1,104 @@
+CREATE DATABASE  HumanFriends;
+USE  HumanFriends;
+
+- Создание таблицы Pets
+
+CREATE TABLE Pets (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(50),
+    Type VARCHAR(50),
+    BirthDate DATE,
+    Commands VARCHAR(255)
+);
+
+- Создание таблицы PackAnimals
+CREATE TABLE PackAnimals (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(50),
+    Type VARCHAR(50),
+    BirthDate DATE,
+    Commands VARCHAR(255)
+);
+
+- Заполнение таблицы данными Pets
+
+INSERT INTO Pets (Name, Type, BirthDate, Commands) VALUES
+  ('Fido', 'Dog', '2020-01-01', 'Sit, Stay, Fetch'),
+  ('Whiskers', 'Cat', '2019-05-15', 'Sit, Pounce'),
+  ('Hammy', 'Hamster', '2021-03-10', 'Roll, Hide'),
+  ('Buddy', 'Dog', '2018-12-10', 'Sit, Paw, Bark'),
+  ('Smudge', 'Cat', '2020-02-20', 'Sit, Pounce, Scratch'),
+  ('Peanut', 'Hamster', '2021-08-01', 'Roll, Spin'),
+  ('Bella', 'Dog', '2019-11-11', 'Sit, Stay, Roll'),
+  ('Oliver', 'Cat', '2020-06-30', 'Meow, Scratch, Jump');
+
+- Заполнение таблицы данными PackAnimals 
+
+INSERT INTO PackAnimals (Name, Type, BirthDate, Commands) VALUES
+  ('Thunder', 'Horse', '2015-07-21', 'Trot, Canter, Gallop'),
+  ('Sandy', 'Camel', '2016-11-03', 'Walk, Carry Load'),
+  ('Eeyore', 'Donkey', '2017-09-18', 'Walk, Carry Load, Bray'),
+  ('Storm', 'Horse', '2014-05-05', 'Trot, Canter'),
+  ('Dune', 'Camel', '2018-12-12', 'Walk, Sit'),
+  ('Burro', 'Donkey', '2019-01-23', 'Walk, Bray, Kick'),
+  ('Blaze', 'Horse', '2016-02-29', 'Trot, Jump, Gallop'),
+  ('Sahara', 'Camel', '2015-08-14', 'Walk, Run');
+
+- Удаление записи о верблюдах из таблицы PackAnimals
+
+DELETE FROM PackAnimals WHERE Type = 'Camel';
+
+- Объединение таблиц лошадей и ослов
+
+CREATE TABLE  HorsesAndDonkeys (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(50),
+    Type VARCHAR(50),
+    BirthDate DATE,
+    Commands VARCHAR(255)
+);
+
+INSERT INTO HorsesAndDonkeys (`Name`, Type, BirthDate, `Commands`)
+SELECT Name, Type, BirthDate, Commands FROM PackAnimals
+WHERE Type IN ('Horse', 'Donkey');
+
+- Удаление записей о лошадях и ослах из таблицы PackAnimals
+
+DELETE FROM PackAnimals WHERE Type IN ('Horse', 'Donkey');
+
+- Создание новой таблицы с животными в возрасте от 1 до 3 лет
+
+CREATE TABLE  YoungAnimals (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(50),
+    Type VARCHAR(50),
+    BirthDate DATE,
+    Age INT
+);
+
+- Вставка данных о животных в возрасте от 1 до 3 лет и вычисление их возраста  с точностью до месяца
+
+INSERT INTO YoungAnimals (`Name`, Type, BirthDate, `Age`)
+SELECT Name, Type, BirthDate, TIMESTAMPDIFF(MONTH, BirthDate, CURDATE()) AS Age
+FROM Pets
+WHERE TIMESTAMPDIFF(YEAR, BirthDate, CURDATE()) BETWEEN 1 AND 3;
+
+- Создание объединенной таблицы
+
+CREATE TABLE  AllAnimals (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(50),
+    Type VARCHAR(50),
+    BirthDate DATE,
+    Commands VARCHAR(255),
+    Age INT,
+    OriginalTable VARCHAR(50)
+);
+
+- Вставка данных из таблицы Pets
+INSERT INTO AllAnimals (Name, Type, BirthDate, Commands, OriginalTable)
+SELECT Name, Type, BirthDate, Commands, 'Pets' AS OriginalTable FROM Pets;
+
+- Вставка данных из таблицы PackAnimals
+INSERT INTO AllAnimals (Name, Type, BirthDate, Commands, OriginalTable)
+SELECT Name, Type, BirthDate, Commands, 'PackAnimals' AS OriginalTable FROM PackAnimals;
